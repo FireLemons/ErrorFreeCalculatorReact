@@ -1,10 +1,12 @@
 import React from 'react';
 import logo from './logo.svg';
+import bluIntel from './blu_intel_pattern.png'
+
 import './App.scss';
 
 function App() {
   return (
-    <div className="App">
+    <div className="App" style={{ backgroundImage: "url(" + bluIntel + ")" }} >
       <p> </p>
       <div className="buttons">
         <div>
