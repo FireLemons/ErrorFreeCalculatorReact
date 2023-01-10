@@ -9,9 +9,9 @@
     border-bottom: 0;
     font-size: 20pt;
     margin: 0;
-    margin-left: calc(50% - 4.5em);
+    margin-left: calc(50% - 6em);
     min-height: 2em;
-    width: calc(9em - 4px);
+    width: calc(12em - 4px);
   }
 
   .buttons {
@@ -19,6 +19,7 @@
       background-color: black;
       border: 2px solid gray;
       color: white;
+      cursor: pointer;
       font-size: 20pt;
       min-width: 3em;
       min-height: 2em;
@@ -42,7 +43,7 @@
       button {
         background-color: #1b5e20;
         color: #c8e6c9;
-        width: 9em;
+        width: 12em;
 
         &:hover {
           background-color: #2e7d32;
