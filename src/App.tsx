@@ -1,7 +1,9 @@
 import React from 'react';
-import bluIntel from './blu_intel_pattern.png'
-
+import bluIntel from './blu_intel_pattern.png';
 import './App.scss';
+
+const baldSoundPath = require('./bald.mp3');
+const baldSound = new Audio(baldSoundPath);
 
 function App() {
   return (
@@ -29,7 +31,7 @@ function App() {
         <div>
           <button>.</button>
           <button>0</button>
-          <button>👨‍🦲</button>
+          <button onClick={() => baldSound.play() }>👨‍🦲</button>
           <button>÷</button>
         </div>
         <div>
