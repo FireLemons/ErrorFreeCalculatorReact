@@ -1,17 +1,18 @@
-import React from 'react';
-import bluIntel from './blu_intel_pattern.png';
+import React, { useState } from 'react';
+import SymbolButton from './SymbolButton';
 import './App.scss';
 
-const baldSoundPath = require('./bald.mp3');
-const baldSound = new Audio(baldSoundPath);
+const baldSound = new Audio('./bald.mp3');
+
+let numberEnabled = true;
 
 function App() {
   return (
-    <div className="App" style={{ backgroundImage: "url(" + bluIntel + ")" }} >
+    <div className="App">
       <p> </p>
       <div className="buttons">
         <div>
-          <button>1</button>
+          <SymbolButton enabled={false} symbol="1" />
           <button>2</button>
           <button>3</button>
           <button>-</button>

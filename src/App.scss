@@ -1,4 +1,10 @@
+:root {
+  --disabled-button-default-color: #bdbdbd;
+}
+
+
 .App {
+  background-image: url(./blu_intel_pattern.png);
   height: 100vh;
   padding-top: 4em;
   text-align: center;
@@ -23,6 +29,15 @@
       font-size: 20pt;
       min-width: 3em;
       min-height: 2em;
+
+      &:disabled {
+        background-color: var(--disabled-button-default-color);
+        cursor: not-allowed;
+
+        &:hover {
+          background-color: var(--disabled-button-default-color);
+        }
+      }
 
       &:hover {
         background-color: #212121;
