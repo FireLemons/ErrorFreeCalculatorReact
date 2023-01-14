@@ -5,19 +5,12 @@ export interface ISymbolButtonProps {
   symbol: string
 }
 
-export interface ISymbolButtonState {
-  enabled: boolean
-}
-
-export default class SymbolButton extends React.Component<ISymbolButtonProps, ISymbolButtonState> {
+export default class SymbolButton extends React.Component<ISymbolButtonProps, {}> {
   constructor(props: ISymbolButtonProps) {
     super(props);
-    this.state = {
-      enabled: props.enabled,
-    };
   }
 
   public render() {
-    return <button disabled={!(this.state.enabled)}>{this.props.symbol}</button>
+    return <button disabled={!(this.props.enabled)}>{this.props.symbol}</button>
   }
 }
