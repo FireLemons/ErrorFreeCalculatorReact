@@ -2,7 +2,6 @@
   --disabled-button-default-color: #bdbdbd;
 }
 
-
 .App {
   background-image: url(./blu_intel_pattern.png);
   height: 100vh;
@@ -67,6 +66,14 @@
 
         &:hover {
           background-color: #2e7d32;
+        }
+
+        &:disabled {
+          background-color: var(--disabled-button-default-color);
+
+          &:hover {
+            background-color: var(--disabled-button-default-color);
+          }
         }
       }
     }

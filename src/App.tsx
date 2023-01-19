@@ -5,6 +5,7 @@ import './App.scss';
 const baldSound = new Audio(require('./bald.mp3'));
 
 interface IAppState {
+  evalEnabled: boolean,
   expression: string,
   numberEnabled: boolean
 }
@@ -14,6 +15,7 @@ export default class App extends React.Component <{}, IAppState> {
     super(props);
 
     this.state = {
+      evalEnabled: false,
       expression: "",
       numberEnabled: true
     }
@@ -55,7 +57,7 @@ export default class App extends React.Component <{}, IAppState> {
             <SymbolButton enabled={false} onClick={this.addToExpression} symbol="÷" />
           </div>
           <div>
-            <button onClick={ () => this.setState({numberEnabled: !(this.state.numberEnabled)}) }> = </button>
+            <button disabled={!(this.state.evalEnabled)} onClick={ () => this.setState({numberEnabled: !(this.state.numberEnabled)}) }> = </button>
           </div>
         </div>
       </div>
