@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import SymbolButton from './SymbolButton';
 import './App.scss';
 
-const baldSound = new Audio(require('./bald.mp3'));
+const baldSound = new Audio(require('./bald.mp3'))
+baldSound.volume = 0.2
 
 interface IAppState {
   evalEnabled: boolean,
@@ -30,7 +31,7 @@ export default class App extends React.Component <{}, IAppState> {
   render () {
     return (
       <div className="App">
-        <p> { this.state.expression } </p>
+        <div><p> { this.state.expression } </p></div>
         <div className="buttons">
           <div>
             <SymbolButton enabled={this.state.numberEnabled} onClick={this.addToExpression} symbol="1" />

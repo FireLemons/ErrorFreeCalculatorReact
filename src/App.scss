@@ -14,16 +14,24 @@
   text-align: center;
 
   p {
-    background-color: white;
+    font-family: 'Cursed Timer Ulil';
+    font-size: 32pt;
+    margin: 0;
+    text-align: right;
+  }
+
+  &>div:first-child {
+    background-color: #c8e6c9;
     border: 2px solid grey;
     border-bottom: 0;
-    font-family: 'Cursed Timer Ulil';
     font-size: 20pt;
-    margin: 0;
     margin-left: calc(50% - 6em);
     min-height: 2em;
     width: calc(12em - 4px);
-    text-align: right;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
   }
 
   .buttons {
