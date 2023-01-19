@@ -28,6 +28,14 @@ export default class App extends React.Component <{}, IAppState> {
     })
   }
 
+  public reset = () => {
+    this.setState({
+      evalEnabled: false,
+      expression: "",
+      numberEnabled: true
+    })
+  }
+
   render () {
     return (
       <div className="App">
@@ -59,7 +67,7 @@ export default class App extends React.Component <{}, IAppState> {
           </div>
           <div>
             <button>del</button>
-            <button>clear</button>
+            <button onClick={this.reset} >clear</button>
           </div>
           <div>
             <button disabled={!(this.state.evalEnabled)} onClick={ () => this.setState({numberEnabled: !(this.state.numberEnabled)}) }> = </button>
