@@ -45,6 +45,7 @@ export default class App extends React.Component <{}, IAppState> {
     }
 
     this.setState({
+      evalEnabled: isEndingInNumber,
       expression: this.state.expression + char,
       operatorEnabled: isEndingInNumber
     })
@@ -93,7 +94,7 @@ export default class App extends React.Component <{}, IAppState> {
             <button onClick={this.reset} >clear</button>
           </div>
           <div>
-            <button disabled={!(this.state.evalEnabled)} onClick={ () => this.setState({numberEnabled: !(this.state.numberEnabled)}) }> = </button>
+            <button disabled={!(this.state.evalEnabled)}> = </button>
           </div>
         </div>
       </div>
