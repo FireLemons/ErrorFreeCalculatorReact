@@ -14,11 +14,12 @@
   text-align: center;
 
   p {
+    direction: rtl;
     font-family: 'Cursed Timer Ulil';
     font-size: 32pt;
     margin: 0;
     overflow-x: scroll;
-    text-align: right;
+    unicode-bidi:bidi-override;
   }
 
   &>div:first-child {
