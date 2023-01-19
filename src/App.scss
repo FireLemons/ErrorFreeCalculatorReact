@@ -76,6 +76,24 @@
     div:nth-child(5) {
       button {
         min-width: 6em;
+
+        &:first-child {
+          background-color: #eeeeee;
+          color: black;
+
+          &:hover {
+            background-color: #e0e0e0;
+          }
+        }
+
+        &:last-child {
+          background-color: #b71c1c;
+          color: #ffebee;
+
+          &:hover {
+            background-color: #c62828;
+          }
+        }
       }
     }
 
