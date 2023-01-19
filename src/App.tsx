@@ -58,6 +58,10 @@ export default class App extends React.Component <{}, IAppState> {
             <SymbolButton enabled={false} onClick={this.addToExpression} symbol="÷" />
           </div>
           <div>
+            <button>del</button>
+            <button>clear</button>
+          </div>
+          <div>
             <button disabled={!(this.state.evalEnabled)} onClick={ () => this.setState({numberEnabled: !(this.state.numberEnabled)}) }> = </button>
           </div>
         </div>
