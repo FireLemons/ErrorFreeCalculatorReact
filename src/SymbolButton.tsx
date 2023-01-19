@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 export interface ISymbolButtonProps {
   enabled: boolean,
+  onClick: Function,
   symbol: string
 }
 
@@ -11,6 +12,6 @@ export default class SymbolButton extends React.Component<ISymbolButtonProps, {}
   }
 
   public render() {
-    return <button disabled={!(this.props.enabled)}>{this.props.symbol}</button>
+    return <button disabled={!(this.props.enabled)} onClick={ () => { this.props.onClick(this.props.symbol) } } >{this.props.symbol}</button>
   }
 }
