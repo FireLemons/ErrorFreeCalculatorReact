@@ -2,13 +2,6 @@ import React, { useState } from 'react';
 import SymbolButton from './SymbolButton';
 import './App.scss';
 
-enum Operator {
-  Addition = '+',
-  Subtraction = '-',
-  Multiplication = '×',
-  Division = '÷'
-}
-
 interface IAppState {
   evalEnabled: boolean,
   expression: string,
@@ -19,17 +12,85 @@ interface IAppState {
   operatorEnabled: boolean
 }
 
+interface IOperator {
+  precedence: number,
+  symbol: string
+}
+
+interface IOperatorContainer {
+  [index: string]: IOperator;
+}
+
+const Operator: IOperatorContainer = {
+  Addition: {
+    precedence: 0,
+    symbol: '+'
+  },
+  Subtraction: {
+    precedence: 0,
+    symbol: '-'
+  },
+  Multiplication: {
+    precedence: 1,
+    symbol: '×'
+  },
+  Division: {
+    precedence: 1,
+    symbol: '÷'
+  }
+}
+
 const baldSound = new Audio(require('./bald.mp3'))
 baldSound.volume = 0.2
 
-function shuntingYardExpression (expressionAsTokens: (Operator|number)[]): (Operator|number)[] {
-  const polishTokenList: (Operator|number)[] = []
+function shuntingYardExpression (expressionAsTokens: (IOperator|number)[]): (IOperator|number)[] {
+  const operatorStack: IOperator[] = []
+  const polishTokenList: (IOperator|number)[] = []
+
+  let token = expressionAsTokens.shift()
+
+  while (token !== undefined) {
+    if (Number(token) === token) {
+      polishTokenList.push(token)
+    } else if (token) {
+
+    }
+
+    token = expressionAsTokens.shift()
+  }
+  /*
+  while there are tokens to be read:
+    read a token
+    if the token is:
+    - a number:
+        put it into the output queue
+    - an operator o1:
+        while (
+            there is an operator o2 at the top of the operator stack which is not a left parenthesis, 
+            and (o2 has greater precedence than o1 or (o1 and o2 have the same precedence and o1 is left-associative))
+        ):
+            pop o2 from the operator stack into the output queue
+        push o1 onto the operator stack
+    - a left parenthesis (i.e. "("):
+        push it onto the operator stack
+    - a right parenthesis (i.e. ")"):
+        while the operator at the top of the operator stack is not a left parenthesis:
+            {assert the operator stack is not empty}
+            pop the operator from the operator stack into the output queue
+        {assert there is a left parenthesis at the top of the operator stack}
+        pop the left parenthesis from the operator stack and discard it
+        if there is a function token at the top of the operator stack, then:
+            pop the function from the operator stack into the output queue
+while there are tokens on the operator stack:
+    {assert the operator on top of the stack is not a (left) parenthesis}
+    pop the operator from the operator stack onto the output queue
+    */
 
   return polishTokenList
 }
 
-function getTokenizedExpression (expression: string): (Operator|number)[] {
-  const expressionAsTokens: (Operator|number)[] = []
+function getTokenizedExpression (expression: string): (IOperator|number)[] {
+  const expressionAsTokens: (IOperator|number)[] = []
   let numericTokenAssemblySpace = ''
   let tokenIsFloat = false
 
@@ -97,7 +158,6 @@ function getTokenizedExpression (expression: string): (Operator|number)[] {
     }
   }
 
-  console.log(numericTokenAssemblySpace)
   expressionAsTokens.unshift(tokenIsFloat ? parseFloat(numericTokenAssemblySpace) : parseInt(numericTokenAssemblySpace))
 
   return expressionAsTokens
