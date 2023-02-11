@@ -43,6 +43,10 @@ const Operator: IOperatorContainer = {
 const baldSound = new Audio(require('./bald.mp3'))
 baldSound.volume = 0.2
 
+function instanceOfOperator(object: any): object is IOperator {
+  return 'precedence' in object && 'symbol' in object;
+}
+
 function shuntingYardExpression (expressionAsTokens: (IOperator|number)[]): (IOperator|number)[] {
   const operatorStack: IOperator[] = []
   const polishTokenList: (IOperator|number)[] = []
@@ -52,40 +56,29 @@ function shuntingYardExpression (expressionAsTokens: (IOperator|number)[]): (IOp
   while (token !== undefined) {
     if (Number(token) === token) {
       polishTokenList.push(token)
-    } else if (token) {
+    } else if (instanceOfOperator(token)) {
+      while (operatorStack.length && operatorStack[operatorStack.length - 1].precedence >= token.precedence) {
+        const topValue = operatorStack.pop()
 
+        if (topValue !== undefined) {
+          polishTokenList.push(topValue)
+        }
+      }
+
+      operatorStack.push(token)
     }
 
     token = expressionAsTokens.shift()
   }
-  /*
-  while there are tokens to be read:
-    read a token
-    if the token is:
-    - a number:
-        put it into the output queue
-    - an operator o1:
-        while (
-            there is an operator o2 at the top of the operator stack which is not a left parenthesis, 
-            and (o2 has greater precedence than o1 or (o1 and o2 have the same precedence and o1 is left-associative))
-        ):
-            pop o2 from the operator stack into the output queue
-        push o1 onto the operator stack
-    - a left parenthesis (i.e. "("):
-        push it onto the operator stack
-    - a right parenthesis (i.e. ")"):
-        while the operator at the top of the operator stack is not a left parenthesis:
-            {assert the operator stack is not empty}
-            pop the operator from the operator stack into the output queue
-        {assert there is a left parenthesis at the top of the operator stack}
-        pop the left parenthesis from the operator stack and discard it
-        if there is a function token at the top of the operator stack, then:
-            pop the function from the operator stack into the output queue
-while there are tokens on the operator stack:
-    {assert the operator on top of the stack is not a (left) parenthesis}
-    pop the operator from the operator stack onto the output queue
-    */
 
+  token = operatorStack.pop()
+
+  while (token !== undefined) {
+    polishTokenList.push(token)
+
+    token = operatorStack.pop()
+  }
+  
   return polishTokenList
 }
 
@@ -234,7 +227,9 @@ export default class App extends React.Component <{}, IAppState> {
   }
 
   public evalExpression = () => {
-    console.log(getTokenizedExpression(this.state.expression))
+    let tokenizedExpression = getTokenizedExpression(this.state.expression)
+    console.log('Expression As Tokens:', tokenizedExpression)
+    console.log('Expression As Polish:', shuntingYardExpression(tokenizedExpression))
   }
 
   public reset = () => {
