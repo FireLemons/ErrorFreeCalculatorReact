@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import SymbolButton from './SymbolButton';
 import './App.scss';
+import { toUnicode } from 'punycode';
 
 interface IAppState {
   evalEnabled: boolean,
@@ -226,6 +227,84 @@ export default class App extends React.Component <{}, IAppState> {
     })
   }
 
+  public delete = () => {
+    if (!(this.state.expression)) {
+      return
+    }
+
+    const expression = this.state.expression
+    console.log('Expression: ', expression)
+    const truncatedExpression = expression.substring(1)
+
+    if (!truncatedExpression) {
+      this.reset()
+      return
+    }
+
+    let evalEnabled = this.state.evalEnabled
+    let isEndingInDecimalNumber = this.state.isEndingInDecimalNumber
+    let minusEnabled = this.state.minusEnabled
+    let operatorEnabled = this.state.operatorEnabled
+
+    console.log("Truncated: ", truncatedExpression)
+    console.log("Truncated Ending: ", truncatedExpression[0])
+
+    switch (truncatedExpression[0]) {
+      case '0':
+      case '1':
+      case '2':
+      case '3':
+      case '4':
+      case '5':
+      case '6':
+      case '7':
+      case '8':
+      case '9':
+        isEndingInDecimalNumber = false
+        evalEnabled = true
+        operatorEnabled = true
+
+        let i = 1
+
+        while (i < truncatedExpression.length && truncatedExpression[i] !== '+' && truncatedExpression[i] !== '×' && truncatedExpression[i] !== '÷' && truncatedExpression[i] !== '-') {
+          if (truncatedExpression[i] === '.') {
+            isEndingInDecimalNumber = true
+          }
+
+          i++
+        }
+        break;
+      case '+':
+      case '×':
+      case '÷':
+        evalEnabled = false
+        isEndingInDecimalNumber = false
+        minusEnabled = true
+        operatorEnabled = false
+        break;
+      case '-':
+        evalEnabled = false
+        isEndingInDecimalNumber = false
+        minusEnabled = truncatedExpression.length > 1 && truncatedExpression[1] !== '-' ? true : false
+        operatorEnabled = false
+        break;
+      case '.':
+        evalEnabled = false
+        isEndingInDecimalNumber = true
+        minusEnabled = false
+        operatorEnabled = false
+        break;
+    }
+
+    this.setState({
+      evalEnabled: evalEnabled,
+      expression: truncatedExpression,
+      isEndingInDecimalNumber: isEndingInDecimalNumber,
+      minusEnabled: minusEnabled,
+      operatorEnabled: operatorEnabled
+    })
+  }
+
   public evalExpression = () => {
     let tokenizedExpression = getTokenizedExpression(this.state.expression)
     console.log('Expression As Tokens:', tokenizedExpression)
@@ -274,7 +353,7 @@ export default class App extends React.Component <{}, IAppState> {
             <SymbolButton enabled={this.state.operatorEnabled} onClick={this.addToExpression} symbol="÷" />
           </div>
           <div>
-            <button>del</button>
+            <button onClick={this.delete}>del</button>
             <button onClick={this.reset} >clear</button>
           </div>
           <div>
