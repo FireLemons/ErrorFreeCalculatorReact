@@ -48,7 +48,7 @@ function instanceOfOperator(object: any): object is IOperator {
   return 'precedence' in object && 'symbol' in object;
 }
 
-function shuntingYardExpression (expressionAsTokens: (IOperator|number)[]): (IOperator|number)[] {
+function postfixExpression (expressionAsTokens: (IOperator|number)[]): (IOperator|number)[] {
   const operatorStack: IOperator[] = []
   const polishTokenList: (IOperator|number)[] = []
 
@@ -311,7 +311,7 @@ export default class App extends React.Component <{}, IAppState> {
   public evalExpression = () => {
     let tokenizedExpression = getTokenizedExpression(this.state.expression)
     console.log('Expression As Tokens:', tokenizedExpression)
-    console.log('Expression As Polish:', shuntingYardExpression(tokenizedExpression))
+    console.log('Expression As Polish:', postfixExpression(tokenizedExpression))
   }
 
   public reset = () => {
