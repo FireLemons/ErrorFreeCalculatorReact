@@ -262,6 +262,7 @@ export default class App extends React.Component <{}, IAppState> {
       case '9':
         isEndingInDecimalNumber = false
         evalEnabled = true
+        minusEnabled = true
         operatorEnabled = true
 
         let i = 1
@@ -294,6 +295,8 @@ export default class App extends React.Component <{}, IAppState> {
         minusEnabled = false
         operatorEnabled = false
         break;
+      default:
+        console.error(new Error(`Unrecognised symbol '${ truncatedExpression[0] }'`))
     }
 
     this.setState({
