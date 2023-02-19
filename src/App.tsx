@@ -44,43 +44,61 @@ const Operator: IOperatorContainer = {
 const baldSound = new Audio(require('./bald.mp3'))
 baldSound.volume = 0.2
 
-function instanceOfOperator(object: any): object is IOperator {
-  return 'precedence' in object && 'symbol' in object;
-}
+function evalPostfixExpression(postfixExpression: (IOperator|number)[]): number {
+  const numberStack: number[] = []
 
-function postfixExpression (expressionAsTokens: (IOperator|number)[]): (IOperator|number)[] {
-  const operatorStack: IOperator[] = []
-  const polishTokenList: (IOperator|number)[] = []
-
-  let token = expressionAsTokens.shift()
-
-  while (token !== undefined) {
+  for (const token of postfixExpression) {
     if (Number(token) === token) {
-      polishTokenList.push(token)
-    } else if (instanceOfOperator(token)) {
-      while (operatorStack.length && operatorStack[operatorStack.length - 1].precedence >= token.precedence) {
-        const topValue = operatorStack.pop()
-
-        if (topValue !== undefined) {
-          polishTokenList.push(topValue)
-        }
+      numberStack.push(token)
+    } else {
+      if (numberStack.length < 2) {
+        throw new Error()
       }
 
-      operatorStack.push(token)
+      const leftOperand = numberStack.pop()
+      const rightOperand = numberStack.pop()
+
+      if (leftOperand === undefined) {
+        throw new RangeError('left operand is not a number')
+      }
+
+      if (rightOperand === undefined) {
+        throw new RangeError('right operand is not a number')
+      }
+
+      switch (token) {
+        case Operator.Addition:
+          numberStack.push(leftOperand + rightOperand)
+          break;
+        case Operator.Subtraction:
+          numberStack.push(leftOperand - rightOperand)
+          break;
+        case Operator.Multiplication:
+          numberStack.push(leftOperand * rightOperand)
+          break;
+        case Operator.Division:
+          numberStack.push(leftOperand / rightOperand)
+          break;
+        default:
+          throw new RangeError('unsupported operator')
+      }
     }
-
-    token = expressionAsTokens.shift()
   }
 
-  token = operatorStack.pop()
+  const computedValue = numberStack.pop()
 
-  while (token !== undefined) {
-    polishTokenList.push(token)
+  console.log(numberStack)
+  console.log(computedValue)
 
-    token = operatorStack.pop()
+  if (Number(computedValue) !== computedValue) {
+    throw new Error('Failed to evaluate expression')
+  } else {
+    return computedValue
   }
-  
-  return polishTokenList
+}
+
+function instanceOfOperator(object: any): object is IOperator {
+  return 'precedence' in object && 'symbol' in object;
 }
 
 function getTokenizedExpression (expression: string): (IOperator|number)[] {
@@ -155,6 +173,41 @@ function getTokenizedExpression (expression: string): (IOperator|number)[] {
   expressionAsTokens.unshift(tokenIsFloat ? parseFloat(numericTokenAssemblySpace) : parseInt(numericTokenAssemblySpace))
 
   return expressionAsTokens
+}
+
+function postfixExpression (expressionAsTokens: (IOperator|number)[]): (IOperator|number)[] {
+  const operatorStack: IOperator[] = []
+  const polishTokenList: (IOperator|number)[] = []
+
+  let token = expressionAsTokens.shift()
+
+  while (token !== undefined) {
+    if (Number(token) === token) {
+      polishTokenList.push(token)
+    } else if (instanceOfOperator(token)) {
+      while (operatorStack.length && operatorStack[operatorStack.length - 1].precedence >= token.precedence) {
+        const topValue = operatorStack.pop()
+
+        if (topValue !== undefined) {
+          polishTokenList.push(topValue)
+        }
+      }
+
+      operatorStack.push(token)
+    }
+
+    token = expressionAsTokens.shift()
+  }
+
+  token = operatorStack.pop()
+
+  while (token !== undefined) {
+    polishTokenList.push(token)
+
+    token = operatorStack.pop()
+  }
+
+  return polishTokenList
 }
 
 export default class App extends React.Component <{}, IAppState> {
@@ -233,7 +286,6 @@ export default class App extends React.Component <{}, IAppState> {
     }
 
     const expression = this.state.expression
-    console.log('Expression: ', expression)
     const truncatedExpression = expression.substring(1)
 
     if (!truncatedExpression) {
@@ -245,9 +297,6 @@ export default class App extends React.Component <{}, IAppState> {
     let isEndingInDecimalNumber = this.state.isEndingInDecimalNumber
     let minusEnabled = this.state.minusEnabled
     let operatorEnabled = this.state.operatorEnabled
-
-    console.log("Truncated: ", truncatedExpression)
-    console.log("Truncated Ending: ", truncatedExpression[0])
 
     switch (truncatedExpression[0]) {
       case '0':
@@ -311,7 +360,9 @@ export default class App extends React.Component <{}, IAppState> {
   public evalExpression = () => {
     let tokenizedExpression = getTokenizedExpression(this.state.expression)
     console.log('Expression As Tokens:', tokenizedExpression)
-    console.log('Expression As Polish:', postfixExpression(tokenizedExpression))
+    const postfixExpressionTemp: (IOperator|number)[] = postfixExpression(tokenizedExpression)
+    console.log('Expression As Polish:', postfixExpressionTemp)
+    console.log('Result:', evalPostfixExpression(postfixExpressionTemp))
   }
 
   public reset = () => {
