@@ -47,6 +47,8 @@ baldSound.volume = 0.2
 function evalPostfixExpression(postfixExpression: (IOperator|number)[]): number {
   const numberStack: number[] = []
 
+  console.log(JSON.stringify(postfixExpression))
+
   for (const token of postfixExpression) {
     if (Number(token) === token) {
       numberStack.push(token)
@@ -55,8 +57,8 @@ function evalPostfixExpression(postfixExpression: (IOperator|number)[]): number 
         throw new Error()
       }
 
-      const leftOperand = numberStack.pop()
       const rightOperand = numberStack.pop()
+      const leftOperand = numberStack.pop()
 
       if (leftOperand === undefined) {
         throw new RangeError('left operand is not a number')
@@ -179,7 +181,8 @@ function postfixExpression (expressionAsTokens: (IOperator|number)[]): (IOperato
   const operatorStack: IOperator[] = []
   const polishTokenList: (IOperator|number)[] = []
 
-  let token = expressionAsTokens.shift()
+  const tokenizedExpression = [...expressionAsTokens]
+  let token = tokenizedExpression.shift()
 
   while (token !== undefined) {
     if (Number(token) === token) {
@@ -196,7 +199,7 @@ function postfixExpression (expressionAsTokens: (IOperator|number)[]): (IOperato
       operatorStack.push(token)
     }
 
-    token = expressionAsTokens.shift()
+    token = tokenizedExpression.shift()
   }
 
   token = operatorStack.pop()
