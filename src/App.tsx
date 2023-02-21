@@ -8,6 +8,7 @@ interface IAppState {
   expression: string,
   isEndingInNegativeNumber: boolean,
   isEndingInDecimalNumber: boolean,
+  isErrorState: boolean,
   minusEnabled: boolean,
   numberEnabled: boolean,
   operatorEnabled: boolean
@@ -222,6 +223,7 @@ export default class App extends React.Component <{}, IAppState> {
       expression: "", // Reversed from logical expression for CSS
       isEndingInNegativeNumber: false,
       isEndingInDecimalNumber: false,
+      isErrorState: false,
       minusEnabled: true,
       numberEnabled: true,
       operatorEnabled: false
@@ -284,7 +286,7 @@ export default class App extends React.Component <{}, IAppState> {
   }
 
   public delete = () => {
-    if (!(this.state.expression)) {
+    if (!(this.state.expression) || this.state.isErrorState) {
       return
     }
 
@@ -365,7 +367,15 @@ export default class App extends React.Component <{}, IAppState> {
     console.log('Expression As Tokens:', tokenizedExpression)
     const postfixExpressionTemp: (IOperator|number)[] = postfixExpression(tokenizedExpression)
     console.log('Expression As Polish:', postfixExpressionTemp)
-    console.log('Result:', evalPostfixExpression(postfixExpressionTemp))
+
+    try{
+      const evaluationResult = evalPostfixExpression(postfixExpressionTemp)
+      console.log('Result:', evaluationResult)
+    } catch (e) {
+      console.error(e)
+
+      this.showError()
+    }
   }
 
   public reset = () => {
@@ -374,9 +384,17 @@ export default class App extends React.Component <{}, IAppState> {
       expression: "",
       isEndingInNegativeNumber: false,
       isEndingInDecimalNumber: false,
+      isErrorState: false,
       minusEnabled: true,
       numberEnabled: true,
       operatorEnabled: false
+    })
+  }
+
+  public showError = () => {
+    this.setState({
+      expression: 'rrorE',
+      isErrorState: true
     })
   }
 
@@ -386,35 +404,35 @@ export default class App extends React.Component <{}, IAppState> {
         <div><p> { this.state.expression } </p></div>
         <div className="buttons">
           <div>
-            <SymbolButton enabled={this.state.numberEnabled} onClick={this.addToExpression} symbol="1" />
-            <SymbolButton enabled={this.state.numberEnabled} onClick={this.addToExpression} symbol="2" />
-            <SymbolButton enabled={this.state.numberEnabled} onClick={this.addToExpression} symbol="3" />
-            <SymbolButton enabled={this.state.operatorEnabled} onClick={this.addToExpression} symbol="+" />
+            <SymbolButton enabled={this.state.numberEnabled && !(this.state.isErrorState)} onClick={this.addToExpression} symbol="1" />
+            <SymbolButton enabled={this.state.numberEnabled && !(this.state.isErrorState)} onClick={this.addToExpression} symbol="2" />
+            <SymbolButton enabled={this.state.numberEnabled && !(this.state.isErrorState)} onClick={this.addToExpression} symbol="3" />
+            <SymbolButton enabled={this.state.operatorEnabled && !(this.state.isErrorState)} onClick={this.addToExpression} symbol="+" />
           </div>
           <div>
-            <SymbolButton enabled={this.state.numberEnabled} onClick={this.addToExpression} symbol="4" />
-            <SymbolButton enabled={this.state.numberEnabled} onClick={this.addToExpression} symbol="5" />
-            <SymbolButton enabled={this.state.numberEnabled} onClick={this.addToExpression} symbol="6" />
-            <SymbolButton enabled={this.state.minusEnabled} onClick={this.addToExpression} symbol="-" />
+            <SymbolButton enabled={this.state.numberEnabled && !(this.state.isErrorState)} onClick={this.addToExpression} symbol="4" />
+            <SymbolButton enabled={this.state.numberEnabled && !(this.state.isErrorState)} onClick={this.addToExpression} symbol="5" />
+            <SymbolButton enabled={this.state.numberEnabled && !(this.state.isErrorState)} onClick={this.addToExpression} symbol="6" />
+            <SymbolButton enabled={this.state.minusEnabled && !(this.state.isErrorState)} onClick={this.addToExpression} symbol="-" />
           </div>
           <div>
-            <SymbolButton enabled={this.state.numberEnabled} onClick={this.addToExpression} symbol="7" />
-            <SymbolButton enabled={this.state.numberEnabled} onClick={this.addToExpression} symbol="8" />
-            <SymbolButton enabled={this.state.numberEnabled} onClick={this.addToExpression} symbol="9" />
-            <SymbolButton enabled={this.state.operatorEnabled} onClick={this.addToExpression} symbol="×" />
+            <SymbolButton enabled={this.state.numberEnabled && !(this.state.isErrorState)} onClick={this.addToExpression} symbol="7" />
+            <SymbolButton enabled={this.state.numberEnabled && !(this.state.isErrorState)} onClick={this.addToExpression} symbol="8" />
+            <SymbolButton enabled={this.state.numberEnabled && !(this.state.isErrorState)} onClick={this.addToExpression} symbol="9" />
+            <SymbolButton enabled={this.state.operatorEnabled && !(this.state.isErrorState)} onClick={this.addToExpression} symbol="×" />
           </div>
           <div>
-            <SymbolButton enabled={!(this.state.isEndingInDecimalNumber)} onClick={this.addToExpression} symbol="." />
-            <SymbolButton enabled={this.state.numberEnabled} onClick={this.addToExpression} symbol="0" />
+            <SymbolButton enabled={!(this.state.isEndingInDecimalNumber || this.state.isErrorState)} onClick={this.addToExpression} symbol="." />
+            <SymbolButton enabled={this.state.numberEnabled && !(this.state.isErrorState)} onClick={this.addToExpression} symbol="0" />
             <button onClick={() => baldSound.play() }>👨‍🦲</button>
-            <SymbolButton enabled={this.state.operatorEnabled} onClick={this.addToExpression} symbol="÷" />
+            <SymbolButton enabled={this.state.operatorEnabled && !(this.state.isErrorState)} onClick={this.addToExpression} symbol="÷" />
           </div>
           <div>
             <button onClick={this.delete}>del</button>
             <button onClick={this.reset} >clear</button>
           </div>
           <div>
-            <button disabled={!(this.state.evalEnabled)} onClick={this.evalExpression}> = </button>
+            <button disabled={!(this.state.evalEnabled) || this.state.isErrorState} onClick={this.evalExpression}> = </button>
           </div>
         </div>
       </div>
