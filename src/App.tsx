@@ -48,8 +48,6 @@ baldSound.volume = 0.2
 function evalPostfixExpression(postfixExpression: (IOperator|number)[]): number {
   const numberStack: number[] = []
 
-  console.log(JSON.stringify(postfixExpression))
-
   for (const token of postfixExpression) {
     if (Number(token) === token) {
       numberStack.push(token)
@@ -89,9 +87,6 @@ function evalPostfixExpression(postfixExpression: (IOperator|number)[]): number 
   }
 
   const computedValue = numberStack.pop()
-
-  console.log(numberStack)
-  console.log(computedValue)
 
   if (Number(computedValue) !== computedValue) {
     throw new Error('Failed to evaluate expression')
@@ -212,6 +207,16 @@ function postfixExpression (expressionAsTokens: (IOperator|number)[]): (IOperato
   }
 
   return polishTokenList
+}
+
+function reverseString (str: string): string {
+  let strReversed = ""
+
+  for (let i = str.length - 1; i > -1; i--) {
+    strReversed += str[i]
+  }
+
+  return strReversed
 }
 
 export default class App extends React.Component <{}, IAppState> {
@@ -364,13 +369,21 @@ export default class App extends React.Component <{}, IAppState> {
 
   public evalExpression = () => {
     let tokenizedExpression = getTokenizedExpression(this.state.expression)
-    console.log('Expression As Tokens:', tokenizedExpression)
     const postfixExpressionTemp: (IOperator|number)[] = postfixExpression(tokenizedExpression)
-    console.log('Expression As Polish:', postfixExpressionTemp)
 
     try{
       const evaluationResult = evalPostfixExpression(postfixExpressionTemp)
-      console.log('Result:', evaluationResult)
+
+      this.setState({
+        evalEnabled: true,
+        expression: (reverseString(evaluationResult + '')),
+        isEndingInNegativeNumber: evaluationResult < 0,
+        isEndingInDecimalNumber: !(Number.isInteger(evaluationResult)),
+        isErrorState: false,
+        minusEnabled: true,
+        numberEnabled: true,
+        operatorEnabled: true
+      })
     } catch (e) {
       console.error(e)
 
