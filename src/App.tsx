@@ -42,8 +42,8 @@ const Operator: IOperatorContainer = {
   }
 }
 
-const baldSound = new Audio(require('./bald.mp3'))
-baldSound.volume = 0.2
+const squeakSound = new Audio(require('./assets/squeak.wav'))
+squeakSound.volume = 0.2
 
 function evalPostfixExpression(postfixExpression: (IOperator|number)[]): number {
   const numberStack: number[] = []
@@ -437,7 +437,7 @@ export default class App extends React.Component <{}, IAppState> {
           <div>
             <SymbolButton enabled={!(this.state.isEndingInDecimalNumber || this.state.isErrorState)} onClick={this.addToExpression} symbol="." />
             <SymbolButton enabled={this.state.numberEnabled && !(this.state.isErrorState)} onClick={this.addToExpression} symbol="0" />
-            <button onClick={() => baldSound.play() }>👨‍🦲</button>
+            <button id="fun" onClick={() => squeakSound.play() }></button>
             <SymbolButton enabled={this.state.operatorEnabled && !(this.state.isErrorState)} onClick={this.addToExpression} symbol="÷" />
           </div>
           <div>

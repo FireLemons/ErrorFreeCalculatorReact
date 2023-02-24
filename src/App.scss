@@ -4,11 +4,11 @@
 
 @font-face {
   font-family: 'Cursed Timer Ulil';
-  src: url(./fonts/cursed-timer-ulil-font/CursedTimerUlil.ttf) format('truetype');
+  src: url(./assets/fonts/cursed-timer-ulil-font/CursedTimerUlil.ttf) format('truetype');
 }
 
 .App {
-  background-image: url(./blu_intel_pattern.png);
+  background-image: url(./assets/blu_intel_pattern.png);
   height: 100vh;
   padding-top: 4em;
   text-align: center;
@@ -117,5 +117,13 @@
         }
       }
     }
+  }
+
+  #fun {
+    background-image: url(./assets/ratBlockSmol.gif);
+    background-repeat: no-repeat;
+    background-position: center; 
+    display: inline-block;
+    vertical-align: top;
   }
 }
