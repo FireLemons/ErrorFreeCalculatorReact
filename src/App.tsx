@@ -97,9 +97,9 @@ function evalPostfixExpression(postfixExpression: (IOperator|number)[]): number 
 
 function getConstantValue (expression: string): number{
   switch(expression) {
-    case 'Infinity':
+    case '∞':
       return Infinity
-    case '-Infinity':
+    case '-∞':
       return -Infinity
     default:
       return parseFloat(expression)
@@ -147,12 +147,7 @@ function getTokenizedExpression (expression: string): (IOperator|number)[] {
       case '7':
       case '8':
       case '9':
-      case 'I':
-      case 'f':
-      case 'i':
-      case 'n':
-      case 't':
-      case 'y':
+      case '∞':
         if (numericTokenAssemblySpace.length && numericTokenAssemblySpace[0] === '-') {
           expressionAsTokens.unshift(getConstantValue(numericTokenAssemblySpace))
           numericTokenAssemblySpace = char
@@ -250,6 +245,7 @@ export default class App extends React.Component <{}, IAppState> {
     let isEndingInDecimalNumber = this.state.isEndingInDecimalNumber
     let isEndingInNegativeNumber = this.state.isEndingInNegativeNumber
     let minusEnabled = true
+    let numberEnabled = this.state.numberEnabled
 
     switch (char) {
       case '-':
@@ -264,12 +260,15 @@ export default class App extends React.Component <{}, IAppState> {
           minusEnabled = false
         }
 
+        numberEnabled = true
+
         break;
       case '+':
       case '×':
       case '÷':
         isEndingInDecimalNumber = false
         isEndingInNegativeNumber = false
+        numberEnabled = true
         break;
       case '.':
         minusEnabled = false
@@ -296,6 +295,7 @@ export default class App extends React.Component <{}, IAppState> {
       expression: char + this.state.expression,
       isEndingInDecimalNumber: isEndingInDecimalNumber,
       minusEnabled: minusEnabled,
+      numberEnabled: numberEnabled,
       operatorEnabled: isEndingInNumber
     })
   }
@@ -383,15 +383,22 @@ export default class App extends React.Component <{}, IAppState> {
 
     try{
       const evaluationResult = evalPostfixExpression(postfixExpressionTemp)
+      let evauluationResultString = '' + evaluationResult
+
+      if (evaluationResult === Infinity) {
+        evauluationResultString = '∞'
+      } else if (evaluationResult === -Infinity) {
+        evauluationResultString = '-∞'
+      }
 
       this.setState({
         evalEnabled: true,
-        expression: (reverseString(evaluationResult + '')),
+        expression: (reverseString(evauluationResultString + '')),
         isEndingInNegativeNumber: evaluationResult < 0,
-        isEndingInDecimalNumber: !(Number.isInteger(evaluationResult)),
+        isEndingInDecimalNumber: !(Number.isInteger(evaluationResult)) && evaluationResult === Infinity || evaluationResult === -Infinity,
         isErrorState: false,
         minusEnabled: true,
-        numberEnabled: true,
+        numberEnabled: evaluationResult !== Infinity && evaluationResult !== -Infinity,
         operatorEnabled: true
       })
     } catch (e) {
