@@ -316,9 +316,15 @@ export default class App extends React.Component <{}, IAppState> {
     let evalEnabled = this.state.evalEnabled
     let isEndingInDecimalNumber = this.state.isEndingInDecimalNumber
     let minusEnabled = this.state.minusEnabled
+    let numberEnabled = this.state.numberEnabled
     let operatorEnabled = this.state.operatorEnabled
 
     switch (truncatedExpression[0]) {
+      case '∞':
+        isEndingInDecimalNumber = true
+        numberEnabled = false
+        operatorEnabled = true
+        break;
       case '0':
       case '1':
       case '2':
@@ -373,6 +379,7 @@ export default class App extends React.Component <{}, IAppState> {
       expression: truncatedExpression,
       isEndingInDecimalNumber: isEndingInDecimalNumber,
       minusEnabled: minusEnabled,
+      numberEnabled: numberEnabled,
       operatorEnabled: operatorEnabled
     })
   }
