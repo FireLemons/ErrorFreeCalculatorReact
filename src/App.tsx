@@ -95,6 +95,17 @@ function evalPostfixExpression(postfixExpression: (IOperator|number)[]): number 
   }
 }
 
+function getConstantValue (expression: string): number{
+  switch(expression) {
+    case 'Infinity':
+      return Infinity
+    case '-Infinity':
+      return -Infinity
+    default:
+      return parseFloat(expression)
+  }
+}
+
 function instanceOfOperator(object: any): object is IOperator {
   return 'precedence' in object && 'symbol' in object;
 }
@@ -102,33 +113,28 @@ function instanceOfOperator(object: any): object is IOperator {
 function getTokenizedExpression (expression: string): (IOperator|number)[] {
   const expressionAsTokens: (IOperator|number)[] = []
   let numericTokenAssemblySpace = ''
-  let tokenIsFloat = false
 
   for (const char of expression) {
     switch (char) {
       case '+':
-        expressionAsTokens.unshift(tokenIsFloat ? parseFloat(numericTokenAssemblySpace) : parseInt(numericTokenAssemblySpace))
+        expressionAsTokens.unshift(getConstantValue(numericTokenAssemblySpace))
         numericTokenAssemblySpace = ''
-        tokenIsFloat = false
 
         expressionAsTokens.unshift(Operator.Addition)
         break;
       case '×':
-        expressionAsTokens.unshift(tokenIsFloat ? parseFloat(numericTokenAssemblySpace) : parseInt(numericTokenAssemblySpace))
+        expressionAsTokens.unshift(getConstantValue(numericTokenAssemblySpace))
         numericTokenAssemblySpace = ''
-        tokenIsFloat = false
 
         expressionAsTokens.unshift(Operator.Multiplication)
         break;
       case '÷':
-        expressionAsTokens.unshift(tokenIsFloat ? parseFloat(numericTokenAssemblySpace) : parseInt(numericTokenAssemblySpace))
+        expressionAsTokens.unshift(getConstantValue(numericTokenAssemblySpace))
         numericTokenAssemblySpace = ''
-        tokenIsFloat = false
 
         expressionAsTokens.unshift(Operator.Division)
         break;
       case '.':
-        tokenIsFloat = true
         numericTokenAssemblySpace = char + numericTokenAssemblySpace
         break;
       case '0':
@@ -141,10 +147,15 @@ function getTokenizedExpression (expression: string): (IOperator|number)[] {
       case '7':
       case '8':
       case '9':
+      case 'I':
+      case 'f':
+      case 'i':
+      case 'n':
+      case 't':
+      case 'y':
         if (numericTokenAssemblySpace.length && numericTokenAssemblySpace[0] === '-') {
-          expressionAsTokens.unshift(tokenIsFloat ? parseFloat(numericTokenAssemblySpace) : parseInt(numericTokenAssemblySpace))
+          expressionAsTokens.unshift(getConstantValue(numericTokenAssemblySpace))
           numericTokenAssemblySpace = char
-          tokenIsFloat = false
 
           expressionAsTokens.unshift(Operator.Addition)
         } else {
@@ -153,9 +164,8 @@ function getTokenizedExpression (expression: string): (IOperator|number)[] {
         break;
       case '-':
         if (numericTokenAssemblySpace.length && numericTokenAssemblySpace[0] === '-') {
-          expressionAsTokens.unshift(tokenIsFloat ? parseFloat(numericTokenAssemblySpace) : parseInt(numericTokenAssemblySpace))
+          expressionAsTokens.unshift(getConstantValue(numericTokenAssemblySpace))
           numericTokenAssemblySpace = ''
-          tokenIsFloat = false
 
           expressionAsTokens.unshift(Operator.Subtraction)
         } else {
@@ -168,7 +178,7 @@ function getTokenizedExpression (expression: string): (IOperator|number)[] {
     }
   }
 
-  expressionAsTokens.unshift(tokenIsFloat ? parseFloat(numericTokenAssemblySpace) : parseInt(numericTokenAssemblySpace))
+  expressionAsTokens.unshift(getConstantValue(numericTokenAssemblySpace))
 
   return expressionAsTokens
 }
